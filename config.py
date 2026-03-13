@@ -1,0 +1,1 @@
+DataDir = r"C:\Users\carld\.cache\kagglehub\datasets\masoudnickparvar\brain-tumor-mri-dataset\versions\2"
