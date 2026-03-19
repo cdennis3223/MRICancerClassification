@@ -17,11 +17,32 @@ TestDir = DataDir + "/Testing"
 TrainDS = ImageFolder(TrainDir)
 TestDS = ImageFolder(TestDir)
 
-contrast = []
-resolution = []
+def PreprocessImg(img):
+    
+    #Convert to Grayscale
+    img = np.mean(img, axis=2)
 
-for i in range(50):
+    #Normalize the imgae
+    img = (img - np.mean(img)) / (np.std(img) + 1e-8)
+    #Cast to uint8 for CLAHE, Contrast boosting
+    img = img-img.min()
+    img = img/(img.max() + 1e-8)
+    img = (img * 255).astype(np.uint8)
+
+    #Boost Contrast using CLAHE(Contrast Limited Adaptive Histogram Equalization)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))#boost limit is 2.0, tile size is 8x8
+    img = clahe.apply(img)#creates CDF to redistribute pixel values, boosting contrast
+
+    return img
+
+for i in range(6):
+    random.seed(i)
     idx = random.randint(0, len(TrainDS)-1)
     img, label = TrainDS[idx]
-    resolution.append(img.size)
-    print("Resolution:", img.size, " Label:", TrainDS.classes[label])
+    img = PreprocessImg(img)
+    plt.subplot(2,3,i+1)
+    plt.imshow(img, cmap='gray')
+    plt.title(TrainDS.classes[label])
+plt.show()
+
+    
