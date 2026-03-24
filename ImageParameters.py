@@ -18,9 +18,53 @@ TestDS = ImageFolder(TestDir)
 
 plt.close('all')
 
+def crop_to_brain(img, threshold=10, margin=5):
+    """
+    Crop MRI image to the main non-black region.
+    Parameters
+    ----------
+    img : np.ndarray
+        Input grayscale image.
+    threshold : int
+        Pixels above this value are treated as foreground.
+    margin : int
+        Extra pixels to keep around the detected brain region.
+    Returns
+    -------
+    cropped : np.ndarray
+        Cropped image.
+    """
+    # Create binary mask of non-black region
+    _, mask = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
+
+    # Find contours
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # If nothing found, return original
+    if not contours:
+        return img
+
+    # Largest contour is usually the head/brain region
+    largest = max(contours, key=cv2.contourArea)
+    x, y, w, h = cv2.boundingRect(largest)
+
+    # Add margin safely
+    x1 = max(x - margin, 0)
+    y1 = max(y - margin, 0)
+    x2 = min(x + w + margin, img.shape[1])
+    y2 = min(y + h + margin, img.shape[0])
+
+    return img[y1:y2, x1:x2]
+
 def PreProcessImg(img, GridSize, BoostFactor, TargetSize):
     # Convert to grayscale
     img = np.mean(img, axis=2)
+    
+    #Cast to uint8 for processing
+    img = img.astype(np.uint8)
+
+    #Crop the image to the main non-black region
+    img = crop_to_brain(img, threshold=10, margin=5)
     
     #Resize the imgae
     target_h, target_w = TargetSize
@@ -35,12 +79,6 @@ def PreProcessImg(img, GridSize, BoostFactor, TargetSize):
     x_offset = (target_w - new_w) // 2
     padded[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = img
     img=padded
-    #Normalize the imgae
-    img = (img - np.mean(img)) / (np.std(img) + 1e-8)
-    #Cast to uint8 Contrast boosting
-    img = img-img.min()
-    img = img/(img.max() + 1e-8)
-    img = (img * 255).astype(np.uint8)
 
     #Divide the image into non-overlapping grids
     h, w = img.shape
@@ -59,21 +97,23 @@ def PreProcessImg(img, GridSize, BoostFactor, TargetSize):
             boosted_grid = np.clip(boosted_grid, 0, 255)
             boosted_img[i:i+grid_h, j:j+grid_w] = boosted_grid
 
-    return boosted_img.astype(np.uint8)
+    #Normalize the image
+    boosted_img = (boosted_img - np.mean(boosted_img)) / (np.std(boosted_img) + 1e-8)
+
+    return boosted_img
 
 for i in range(6):
-    random.seed(i+8)
+    random.seed(i+42)
     idx = random.randint(0, len(TrainDS)-1)
     img, label = TrainDS[idx]
-    img = PreProcessImg(img, GridSize=(10, 10), BoostFactor=1.75, TargetSize=(256, 256))
+    img = PreProcessImg(img, GridSize=(8, 8), BoostFactor=1.75, TargetSize=(256, 256))
     plt.figure(1)
     plt.subplot(2,3,i+1)
     plt.imshow(img, cmap='gray')
     plt.title(TrainDS.classes[label])
-plt.show()
 
 for i in range(6):
-    random.seed(i+8)
+    random.seed(i+42)
     idx = random.randint(0, len(TrainDS)-1)
     img, label = TrainDS[idx]
     #img = PreProcessImg(img, GridSize=(10, 10), BoostFactor=1.5, TargetSize=(256, 256))
