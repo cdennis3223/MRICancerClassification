@@ -8,6 +8,7 @@ import sklearn
 import matplotlib.pyplot as plt
 import cv2
 import random
+import os
 from config import DataDir
 
 TrainDir = DataDir + "/Training"
@@ -102,24 +103,60 @@ def PreProcessImg(img, GridSize, BoostFactor, TargetSize):
 
     return boosted_img
 
-for i in range(6):
-    random.seed(i+42)
-    idx = random.randint(0, len(TrainDS)-1)
-    img, label = TrainDS[idx]
-    img = PreProcessImg(img, GridSize=(8, 8), BoostFactor=1.75, TargetSize=(256, 256))
-    plt.figure(1)
-    plt.subplot(2,3,i+1)
-    plt.imshow(img, cmap='gray')
-    plt.title(TrainDS.classes[label])
+for folder in os.listdir(TrainDir):
+    folder_path = os.path.join(TrainDir, folder)
 
-for i in range(6):
-    random.seed(i+42)
-    idx = random.randint(0, len(TrainDS)-1)
-    img, label = TrainDS[idx]
-    #img = PreProcessImg(img, GridSize=(10, 10), BoostFactor=1.5, TargetSize=(256, 256))
-    plt.figure(2)
-    plt.subplot(2,3,i+1)
-    plt.imshow(img, cmap='gray')
-    plt.title(TrainDS.classes[label])
-plt.show()
-    
+    if not os.path.isdir(folder_path):
+        continue
+
+    save_path = os.path.join("cleaned", "Training", folder) 
+    os.makedirs(save_path, exist_ok=True)
+
+    for filename in os.listdir(folder_path):
+        img_path = os.path.join(folder_path, filename)
+
+        img = cv2.imread(img_path)
+        if img is None:
+            continue
+
+        newImg = PreProcessImg(
+            img,
+            GridSize=(8, 8),
+            BoostFactor=1.75,
+            TargetSize=(256, 256)
+        )
+
+        # Convert normalized float image to uint8 before saving
+        save_img = cv2.normalize(newImg, None, 0, 255, cv2.NORM_MINMAX)
+        save_img = save_img.astype(np.uint8)
+
+        cv2.imwrite(os.path.join(save_path, filename), save_img)
+
+
+for folder in os.listdir(TestDir):
+    folder_path = os.path.join(TestDir, folder)
+
+    if not os.path.isdir(folder_path):
+        continue
+
+    save_path = os.path.join("cleaned", "Testing", folder)
+    os.makedirs(save_path, exist_ok=True)
+
+    for filename in os.listdir(folder_path):
+        img_path = os.path.join(folder_path, filename)
+
+        img = cv2.imread(img_path)
+        if img is None:
+            continue
+
+        newImg = PreProcessImg(
+            img,
+            GridSize=(8, 8),
+            BoostFactor=1.75,
+            TargetSize=(256, 256)
+        )
+
+        save_img = cv2.normalize(newImg, None, 0, 255, cv2.NORM_MINMAX)
+        save_img = save_img.astype(np.uint8)
+
+        cv2.imwrite(os.path.join(save_path, filename), save_img)
