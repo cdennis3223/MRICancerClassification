@@ -8,7 +8,12 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+/cleaned/
+/unprocessed/
+/BrainMRIData.zip/
+/vgg16_mri_4class.pth/
 
 # Python environments
 .env
 venv/
+*.pth

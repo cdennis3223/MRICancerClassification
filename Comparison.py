@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+#This file builds the image for documentation
+#Carl Dennis SI:007968429
+#Dominic Mendoza SI:012264773
+
+=======
+>>>>>>> ada41e90e8fda3bb859582889dc8a6456984df78
 import os
 import cv2
 import matplotlib.pyplot as plt

@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+#This file imports the dataset from Kaggle and checks that it is working
+#Carl Dennis SI:007968429
+#Dominic Mendoza SI:012264773
+
+=======
+>>>>>>> ada41e90e8fda3bb859582889dc8a6456984df78
 import kagglehub
 import torch
 import monai
