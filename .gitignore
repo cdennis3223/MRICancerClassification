@@ -16,4 +16,6 @@ Thumbs.db
 # Python environments
 .env
 venv/
+
+
 *.pth

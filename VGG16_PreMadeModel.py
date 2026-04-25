@@ -13,7 +13,7 @@ from tqdm import tqdm
 # =========================
 # 1. Paths
 # =========================
-data_root = r"C:\Users\carld\OneDrive\Documents\School\EECE 565\Python\MRICancerClassification\cleaned"
+data_root = r"D:\Users\carld\Documents\School\EECE 565\MRICancerClassification\cleaned"
 train_dir = os.path.join(data_root, "Training")
 test_dir = os.path.join(data_root, "Testing")
 
