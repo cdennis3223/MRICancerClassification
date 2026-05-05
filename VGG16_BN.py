@@ -17,31 +17,31 @@ class VGG16MRI(nn.Module):
         super(VGG16MRI, self).__init__()
         self.features = nn.Sequential(
             # Block 1
-            nn.Conv2d(3, 64, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(3, 64, kernel_size=3, padding=1), nn.BatchNorm2d(64), nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1), nn.BatchNorm2d(64), nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             # Block 2
-            nn.Conv2d(64, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(64, 128, kernel_size=3, padding=1), nn.BatchNorm2d(128), nn.ReLU(inplace=True),
+            nn.Conv2d(128, 128, kernel_size=3, padding=1), nn.BatchNorm2d(128), nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             # Block 3
-            nn.Conv2d(128, 256, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(128, 256, kernel_size=3, padding=1), nn.BatchNorm2d(256), nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1), nn.BatchNorm2d(256), nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1), nn.BatchNorm2d(256), nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             # Block 4
-            nn.Conv2d(256, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(256, 512, kernel_size=3, padding=1), nn.BatchNorm2d(512), nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.BatchNorm2d(512), nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.BatchNorm2d(512), nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             # Block 5
-            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.BatchNorm2d(512), nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.BatchNorm2d(512), nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1), nn.BatchNorm2d(512), nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
         
@@ -93,6 +93,7 @@ val_transform = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406],
                          [0.229, 0.224, 0.225]),
 ])
+
 base_dataset = datasets.ImageFolder(root=train_dir)
 targets = base_dataset.targets
 indices = np.arange(len(base_dataset))
@@ -254,8 +255,8 @@ print(f"Best Validate Accuracy: {best_acc:.4f}")
 model.load_state_dict(best_model_wts)
 
 # Save model
-torch.save(model.state_dict(), "vgg16mriclass.pth")
-print("Model saved as vgg16mriclass.pth")
+torch.save(model.state_dict(), "vgg16mriclass_BN.pth")
+print("Model saved as vgg16mriclass_BN.pth")
 
 
 # -----------------------------

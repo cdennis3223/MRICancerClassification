@@ -24,6 +24,7 @@ class VGG16MRI(nn.Module):
             # Block 2
             nn.Conv2d(64, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
             nn.Conv2d(128, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(128, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             # Block 3
@@ -75,8 +76,7 @@ train_pct =  0.8
 validate_pct = 0.2
 
 # -----------------------------
-# 4. Test transforms
-#    Must match what you used during training
+# 4. Image transformations
 # -----------------------------
 train_transform = transforms.Compose([
     transforms.Resize((256, 256)),
@@ -93,6 +93,7 @@ val_transform = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406],
                          [0.229, 0.224, 0.225]),
 ])
+
 base_dataset = datasets.ImageFolder(root=train_dir)
 targets = base_dataset.targets
 indices = np.arange(len(base_dataset))
@@ -116,6 +117,10 @@ validate_loader = DataLoader(validate_dataset, batch_size=16, shuffle=False)
 class_names = base_dataset.classes
 print("Classes:", class_names)
 print("Class to index:", base_dataset.class_to_idx)
+train_dataset_classes = train_dataset.dataset.classes
+print("Train dataset classes:", train_dataset_classes)
+validate_dataset_classes = validate_dataset.dataset.classes
+print("Validate dataset classes:", validate_dataset_classes)
 
 
 # -----------------------------
@@ -254,8 +259,8 @@ print(f"Best Validate Accuracy: {best_acc:.4f}")
 model.load_state_dict(best_model_wts)
 
 # Save model
-torch.save(model.state_dict(), "vgg16mriclass.pth")
-print("Model saved as vgg16mriclass.pth")
+torch.save(model.state_dict(), "vgg16mriclass_2.pth")
+print("Model saved as vgg16mriclass_2.pth")
 
 
 # -----------------------------

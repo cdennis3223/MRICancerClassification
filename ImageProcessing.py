@@ -1,13 +1,8 @@
-import torch
+import torch.nn as nn
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
-import monai
-import kagglehub
 import numpy as np
-import pandas
-import sklearn
 import matplotlib.pyplot as plt
-import cv2
 import random
 from config import DataDir
 
@@ -37,3 +32,4 @@ for i in range(6):
     plt.imshow(img.permute(1,2,0))
     plt.title(TrainDS.classes[label])
 plt.show()
+
