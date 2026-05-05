@@ -24,7 +24,6 @@ class VGG16MRI(nn.Module):
             # Block 2
             nn.Conv2d(64, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
             nn.Conv2d(128, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1), nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             # Block 3
@@ -47,9 +46,9 @@ class VGG16MRI(nn.Module):
         )
         
         self.classifier = nn.Sequential(
-            nn.Linear(512 * 8 * 8, 512), nn.ReLU(inplace=True), nn.Dropout(),
-            nn.Linear(512, 512), nn.ReLU(inplace=True), nn.Dropout(),
-            nn.Linear(512, num_classes),
+            nn.Linear(512 * 8 * 8, 2048), nn.ReLU(inplace=True), nn.Dropout(),
+            nn.Linear(2048, 2048), nn.ReLU(inplace=True), nn.Dropout(),
+            nn.Linear(2048, num_classes),
         )
 
     def forward(self, x):
@@ -62,7 +61,7 @@ class VGG16MRI(nn.Module):
 # =========================================================
 # 2. Paths and settings
 # =========================================================
-model_path = r"D:\Users\carld\Documents\School\EECE 565\MRICancerClassification\vgg16mriclass_2.pth"
+model_path = r"D:\Users\carld\Documents\School\EECE 565\MRICancerClassification\vgg16mriclass.pth"
 test_dir   = r"D:\Users\carld\Documents\School\EECE 565\MRICancerClassification\cleaned\Testing"
 
 batch_size = 16

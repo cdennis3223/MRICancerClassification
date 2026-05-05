@@ -50,6 +50,7 @@ class VGG16MRI(nn.Module):
             nn.Linear(2048, 2048), nn.ReLU(inplace=True), nn.Dropout(),
             nn.Linear(2048, num_classes),
         )
+        
 
     def forward(self, x):
         x = self.features(x)
@@ -80,8 +81,6 @@ validate_pct = 0.2
 # -----------------------------
 train_transform = transforms.Compose([
     transforms.Resize((256, 256)),
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(20),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406],
                          [0.229, 0.224, 0.225]),
